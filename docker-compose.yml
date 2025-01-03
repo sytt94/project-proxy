@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  3proxy_100_247:
+    image: 3proxy:311224
+    container_name: 3proxy_100_247
+    privileged: true
+    networks:
+      ipvlan_network:
+        ipv4_address: 192.168.100.247
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - /home/sytt/project-proxy/3proxy/3proxy.cfg:/usr/local/3proxy/conf/3proxy.cfg
+      - /home/sytt/project-proxy/log:/usr/local/3proxy/logs
+    command: ["sh", "-c", "service 3proxy start && sleep infinity"]
+
+  3proxy_100_248:
+    image: 3proxy:311224
+    container_name: 3proxy_100_248
+    privileged: true
+    networks:
+      ipvlan_network:
+        ipv4_address: 192.168.100.248
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+    volumes:
+      - /home/sytt/project-proxy/3proxy/3proxy.cfg:/usr/local/3proxy/conf/3proxy.cfg
+      - /home/sytt/project-proxy/log:/usr/local/3proxy/logs
+    command: ["sh", "-c", "service 3proxy start && sleep infinity"]
+
+networks:
+  ipvlan_network:
+    external: true
+    name: ipvlan_network

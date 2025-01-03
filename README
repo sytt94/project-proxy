@@ -1,0 +1,11 @@
+#tao docker network ipvlan_network
+docker network create   --driver ipvlan   --subnet=192.168.100.0/24   --gateway=192.168.100.1   -o ipvlan_mode=l2   -o parent=ens192   ipvlan_network
+#chạy container freeradius <lưu ý thay đổi ip và đường dẫn cho phù hợp>
+docker run -it --net ipvlan_network --ip 192.168.100.254 -e TZ=Asia/Ho_Chi_Minh -v <path>/project-proxy/radius:/home/ubuntu -v <path>/project-proxy/log:/var/log/3proxy --name freeradius tiensy94/freeradius:020124
+
+#chạy file create_docker-compose.py  (lưu ý thay home/sytt = path của bạn)
+python3.10 create_docker-compose.py
+
+#chạy file docker-compose 
+docker-compose up -d
+
