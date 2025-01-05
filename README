@@ -9,3 +9,5 @@ python3.10 create_docker-compose.py
 #chạy file docker-compose 
 docker-compose up -d
 
+#chạy cron log
+*/5 * * * * docker exec freeradius php /home/ubuntu/update_ip.php > /dev/null

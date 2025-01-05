@@ -1,5 +1,5 @@
-start_ip = 245
-end_ip = 246
+start_ip = 244
+end_ip = 248
 
 with open('docker-compose.yml', 'w') as f:
     f.write("version: '3.8'\n\nservices:\n")
