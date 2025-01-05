@@ -23,8 +23,10 @@ $latest_lines = array_slice($lines, -10);
 foreach ($latest_lines as $line) {
     $temp = explode(' ',$line);
     $temp1 = explode(':',$temp[5]);
-    $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = 1;
+    $datetime = $temp[0].' '.$temp[1];
+    $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = DateTime::createFromFormat('H:i:s d-m-Y', $datetime)->format('Y-m-d H:i:s');
 }
+print_r($result);
 //lam thong so import
 #    $temp = '';
 #    foreach ($result as $key => $value) {
@@ -47,7 +49,7 @@ if (!$connection) {
     foreach ($result as $key => $value) {
       foreach ($value as $key1 => $value1) {
         foreach ($value1 as $key2 => $value2) {
-          $temp = $temp.'("'.$key.'","'.$key1.'","'.$key2.'","'.date("Y-m-d H:i:s").'"),';
+          $temp = $temp.'("'.$key.'","'.$key1.'","'.$key2.'","'.$value2.'"),';
         }
       }
     }
