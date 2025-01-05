@@ -24,9 +24,11 @@ foreach ($latest_lines as $line) {
     $temp = explode(' ',$line);
     $temp1 = explode(':',$temp[5]);
     $datetime = $temp[0].' '.$temp[1];
-    $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = DateTime::createFromFormat('H:i:s d-m-Y', $datetime)->format('Y-m-d H:i:s');
+    $date = DateTime::createFromFormat('H:i:s d-m-Y', $datetime, new DateTimeZone('UTC'));
+    $date->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh'));
+    $formatted_datetime = $date->format('Y-m-d H:i:s');
+    $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = $formatted_datetime;
 }
-print_r($result);
 //lam thong so import
 #    $temp = '';
 #    foreach ($result as $key => $value) {
