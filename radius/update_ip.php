@@ -18,27 +18,25 @@ foreach ($files as $file) {
 }
 
 // Lấy 1000 dòng mới nhất
-$latest_lines = array_slice($lines, -10);
+$latest_lines = array_slice($lines, -100000);
 // In ra các dòng mới nhất
 foreach ($latest_lines as $line) {
     $temp = explode(' ',$line);
-    $temp1 = explode(':',$temp[5]);
-    $datetime = $temp[0].' '.$temp[1];
-    $date = DateTime::createFromFormat('H:i:s d-m-Y', $datetime, new DateTimeZone('UTC'));
-    $date->setTimezone(new DateTimeZone('Asia/Ho_Chi_Minh'));
-    $formatted_datetime = $date->format('Y-m-d H:i:s');
-    $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = $formatted_datetime;
+    if (count($temp) == 11) {
+      $temp1 = explode(':',$temp[5]);
+      $datetime = $temp[0].' '.$temp[1];
+      $format = 'H:i:s d-m-Y';
+      $date = DateTime::createFromFormat($format, $datetime);
+      if ($date !== false && $date->format($format) === $datetime) {
+        $date = DateTime::createFromFormat('H:i:s d-m-Y', $datetime, new DateTimeZone('UTC'));
+        $date->setTimezone(new DateTimeZone('GMT+7'));
+        $formatted_datetime = $date->format('Y-m-d H:i:s');
+        if ($temp[3] != '=-=') {
+          $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = $formatted_datetime;
+        }
+      }
+    }
 }
-//lam thong so import
-#    $temp = '';
-#    foreach ($result as $key => $value) {
-#        foreach ($value as $key1 => $value1) {
-#            foreach ($value1 as $key2 => $value2) {
-#                $temp = $temp.'("'.$key.'","'.$key1.'","'.$key2.'","'.date("Y-m-d H:i:s").'"),';
-#            }
-#        }
-#    }
-#    $value_import = rtrim($temp,',');
 if (!$connection) {
     echo "Error Connection CSDL".mysqli_error($connection);
     exec('curl -d chat_id='.$tele_svcode_id.' -d text="[MYSQL-update-warehouse]-CONNECTION_SQL '.$argv[1].'" '.$tele_svcode_link.''); 
@@ -57,7 +55,6 @@ if (!$connection) {
     }
     $value_import = rtrim($temp,',');
     $sql = "INSERT INTO radIPlogin ( username, ip_client, nas, lastupdate) VALUES ".$value_import." ON DUPLICATE KEY UPDATE lastupdate = VALUES(lastupdate)";
-    echo $sql;
     if (mysqli_query($connection, $sql)) {
         echo "New record created successfully";
     } else {
