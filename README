@@ -1,13 +1,28 @@
-#tao docker network ipvlan_network
-docker network create   --driver ipvlan   --subnet=192.168.100.0/24   --gateway=192.168.100.1   -o ipvlan_mode=l2   -o parent=ens192   ipvlan_network
-#chạy container freeradius <lưu ý thay đổi ip và đường dẫn cho phù hợp>
-docker run -it --net ipvlan_network --ip 192.168.100.254 -e TZ=Asia/Ho_Chi_Minh -v <path>/project-proxy/radius:/home/ubuntu -v <path>/project-proxy/log:/var/log/3proxy --name freeradius tiensy94/freeradius:020124
-
-#chạy file create_docker-compose.py  (lưu ý thay home/sytt = path của bạn)
-python3.10 create_docker-compose.py
-
+###GIT CLONE CODE#####
+git clone https://github.com/sytt94/project-proxy.git
+###TAO THU LUC LOG####
+mkdir log
+chmod -R 777 log
+###XOA IPVLAN NETWORK####
+docker network rm ipvlan_network
+###TAO IPVLAN NETWORK###
+docker network create   --driver ipvlan   --subnet=172.31.0.0/16   --gateway=172.31.1.1   -o ipvlan_mode=l2   -o parent=ens192   ipvlan_network
+###CHAY FREERADIUS####
+docker run -it --net ipvlan_network --ip 172.31.1.2 -e TZ=Asia/Ho_Chi_Minh -v /home/sytt/project-proxy/radius:/home/ubuntu -v /home/sytt/project-proxy/log:/var/log/3proxy --name freeradius tiensy94/freeradius:080125
+###SUA FILE /etc/freeradius/3.0/mods-available/sql - NEU FREERADIUS LA CLUSTER ###
+driver = "rlm_sql_mysql"
+server = "db_server_ip"
+port = 3306
+login = "radius_user"
+password = "password"
+#TRO RADIUS_SERVER o file 3proxy/3proxy.cfg
+luu y moi cum se tro den freeradius cluster
+## chay file create_docker_compose.py
+python3.10 create_docker_compose.py
 #chạy file docker-compose 
 docker-compose up -d
-
-#chạy cron log
-*/5 * * * * docker exec freeradius php /home/ubuntu/update_ip.php > /dev/null
+#chạy cron log voi cac server co freeradius-container
+*/15 * * * * docker exec freeradius php /home/ubuntu/update_ip.php > /dev/null
+##sua file /home/ubuntu/userinfo trên freeradius tro ve database-primary
+##chay log truc tiep tren server=> thay doi database_ip => doi duong dan toi folder log
+*/15 * * * * php /home/sytt/project-proxy/radius/update_ip.php > /dev/null
