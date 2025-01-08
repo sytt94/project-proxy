@@ -1,9 +1,9 @@
 <?php 
-include('/home/ubuntu/userinfo.php');
+include('userinfo.php');
 date_default_timezone_set('Asia/Ho_Chi_Minh');
 $connection = mysqli_connect($sql_host, $sql_user, $sql_pass,$db);
 // Lấy tất cả các file có tên bắt đầu bằng abc và kết thúc bằng .log
-$files = glob("/var/log/3proxy/3proxy*.log");
+$files = glob("/home/sytt/project-proxy/log/3proxy*.log");
 
 // Mảng để lưu tất cả các dòng
 $lines = [];
@@ -19,6 +19,7 @@ foreach ($files as $file) {
 
 // Lấy 1000 dòng mới nhất
 $latest_lines = array_slice($lines, -100000);
+$pattern = '/\b((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/';
 // In ra các dòng mới nhất
 foreach ($latest_lines as $line) {
     $temp = explode(' ',$line);
@@ -31,8 +32,10 @@ foreach ($latest_lines as $line) {
         $date = DateTime::createFromFormat('H:i:s d-m-Y', $datetime, new DateTimeZone('UTC'));
         $date->setTimezone(new DateTimeZone('GMT+7'));
         $formatted_datetime = $date->format('Y-m-d H:i:s');
-        if ($temp[3] != '=-=') {
-          $result[str_replace('=','',$temp[3])][$temp1[0]][str_replace(']','',str_replace('[','',$temp[2]))] = $formatted_datetime;
+        if (trim($temp[3]) !== '=-=') {
+          if (preg_match($pattern, trim($temp1[0])) === 1) {
+            $result[trim(str_replace('=','',$temp[3]))][trim($temp1[0])][trim(str_replace(']','',str_replace('[','',$temp[2])))] = $formatted_datetime;
+          }
         }
       }
     }
