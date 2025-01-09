@@ -51,13 +51,12 @@ if (!$connection) {
     $value_import = rtrim($temp,',');
     $value_delete = rtrim($temp_delete,',');
     $sql = "INSERT INTO dockerinfo (ip_server, ip_container, name_container, status_container) VALUES ".$value_import." ON DUPLICATE KEY UPDATE  name_container = VALUES(name_container), status_container = VALUES(status_container)";
-    echo $sql;
     if (mysqli_query($connection, $sql)) {
         echo "New record created successfully";
     } else {
         echo "Error: " . $sql . "<br>" . mysqli_error($connection);
     }
-    $sql_delete =  "DELETE FROM srcnat WHERE (ip_server,ip_container) NOT IN (".$value_delete.") AND nas = '".$host."'";
+    $sql_delete =  "DELETE FROM dockerinfo WHERE (ip_server,ip_container) NOT IN (".$value_delete.") AND ip_server = '".$serverIP."'";
     if (mysqli_query($connection, $sql_delete)) {
         echo "DEL record successfully";
     } else {
