@@ -26,3 +26,12 @@ docker-compose up -d
 ##sua file /home/ubuntu/userinfo trên freeradius tro ve database-primary
 ##chay log truc tiep tren server=> thay doi database_ip => doi duong dan toi folder log
 */15 * * * * php /home/sytt/project-proxy/radius/update_ip.php > /dev/null
+###các lệnh kiểm tra cơ bản
+curl -X POST -H "Content-Type: application/json" -d '{"command":"showListUser","owner":"toancr"}' http://172.31.1.3/proxy_cmgate.php //API
+curl -x http://sytt-001:123456@172.31.1.105:8080 http://example.com // proxy-loca
+curl -x http://sytt-001:123456@112.197.239.105:10012 http://example.com
+### Các bước check lỗi proxy
+- check log web
+- check local proxy
+- check external proxy
+- check gw ipvlan_network -> Mik GW
